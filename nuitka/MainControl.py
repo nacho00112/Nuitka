@@ -65,6 +65,7 @@ from nuitka.PythonFlavors import (
     isFedoraPackagePython,
     isNuitkaPython,
     isPyenvPython,
+    isTermuxPython,
 )
 from nuitka.PythonVersions import (
     getPythonABI,
@@ -97,6 +98,7 @@ from nuitka.utils.ModuleNames import ModuleName
 from nuitka.utils.ReExecute import callExecProcess, reExecuteNuitka
 from nuitka.utils.StaticLibraries import getSystemStaticLibPythonPath
 from nuitka.utils.Utils import isMacOS, isWin32Windows
+from nuitka.utils.Termux import checkTermuxSpecificCommands
 from nuitka.Version import getCommercialVersion, getNuitkaVersion
 
 from . import ModuleRegistry, Options, OutputDirectories
@@ -909,6 +911,11 @@ of the precise Python interpreter binary and '-m nuitka', e.g. use this
     sys.exit(error_message)
 
 
+def _checkWarnings():
+    if isTermuxPython():
+        checkTermuxSpecificCommands()
+
+
 def _main():
     """Main program flow of Nuitka
 
@@ -937,7 +944,8 @@ def _main():
             getCommercialVersion() or "not installed",
         )
     )
-
+    _checkWarnings()
+    
     reportMemoryUsage(
         "after_launch",
         "Total memory usage before processing:"
